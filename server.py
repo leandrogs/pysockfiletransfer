@@ -62,7 +62,7 @@ class Server(object):
             if(data):
                 if(data == "#001"):
                     listOfFiles = self.getFileList()
-                    strListOfFiles = ','.join(listOfFiles)
+                    strListOfFiles = '#'.join(listOfFiles)
                     self._sendFileList(strListOfFiles, conn)
                     break
                 else:
@@ -124,7 +124,7 @@ class Server(object):
             conn: Objeto de conexão do cliente
         """
         print("Starting receiving file...")
-        fileName = conn.recv(1024).decode()
+        fileName = conn.recv(512).decode()
         f = open(fileName, "wb")
         while True:
             read = conn.recv(1024)

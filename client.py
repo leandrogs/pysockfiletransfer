@@ -88,6 +88,9 @@ class Client(object):
         if self._logIn(passwd):
             fileIndex -= 1
             listOfFiles = self.getFileList()
+            if fileIndex >= len(listOfFiles):
+                print("Este arquivo não existe")
+                return
             self.clientSocket.sendall(listOfFiles[fileIndex][1:].encode())
             f = open(listOfFiles[fileIndex], "rb")
             while True:
@@ -133,7 +136,7 @@ class Client(object):
         while len(self.listOfFiles) == 0:
             data = self.clientSocket.recv(1024).decode()
             if (data):
-                self.listOfFiles = data.split(',')
+                self.listOfFiles = data.split('#')
                 if(len(self.listOfFiles) > 0):
                     self.closeConnection()
                     return self.listOfFiles
@@ -145,8 +148,10 @@ class Client(object):
             fileIndex: Indice do arquivo no qual se deseja baixar (indice começa
                 em um).
         """
+        if fileIndex > len(self.listOfFiles):
+            print("Este arquivo não existe no servidor")
+            return
         fileIndex = fileIndex - 1
-
         try:
             data = Client.ASK_SPECIFIC_FILE + "#" + str(fileIndex)
             self.clientSocket.sendall(data.encode())
